@@ -1,0 +1,412 @@
+template<typename T>
+class vector
+{
+public:
+	vector();
+	vector(int size);
+	vector(const vector<T> &copy);
+	~vector();
+	T* begin();					//Return iterator to beginning
+	T* end();					//Return iterator to end
+	int size();					//Return the curent size
+	void resize(int size);		//Change size
+	int capacity();				//Return the capacity
+	bool empty();				//Test whether the vector it empty
+	void reserve(int size);		//Request a change in capacity
+	void shrink_to_fit();		//Request the capacity to shrink to fit to the size
+
+	T& operator[](int n);		//Return the element at the position n
+	void operator=(vector<T>x);	//assign x to the vector
+	T& at(int n);				//Return the element at the position n,do range checking
+	T& front();					//Return the front element
+	T& back();					//Return the back element
+	T* data();					//Return the pointer to the data
+
+	void assign(int n, T val);						//Assign val to the first n element 
+	void assign(T* begin, T* end);					//Assign all the elements from begin to end
+	void push_back(T val);							//Add an element to the end
+	void pop_back();								//Delete an element from the end
+	void insert(T* position, int n, T val);			//Insert n vals to positon
+	void insert(T* first, T* last);					//Insert all the elemnt from first to last to the beginning
+	void insert(T* position, T* fisrt, T* last);	//Insert all the element from first to last to positon
+	void erase(T *position);						//Erase the element position;
+	void erase(T* first, T* last);					//Erase all the elements from first to last
+	void swap(vector<T>x);							//Swap the two vector
+	void clear();									//Clear all the elements
+	T* emplace(T *position, T val);					//Add an element to the back of position,return the newly added element
+	void emplace_back(T val);						//Add an element at the end
+private:
+	T *pointer;
+	int size_t, capacity_t;
+	const double increase_factor = 1.5,decrease_factor=2;
+};
+
+template<typename T>
+vector<T>::vector()
+{
+	capacity_t =size_t = 0;
+	pointer =0;
+}
+
+template<typename T>
+vector<T>::vector(int size)
+{
+	capacity_t =size_t = size;
+	pointer = new T[capacity_t];
+	for (int i = 0; i < capacity_t; i++)
+		pointer[i] = 0;
+}
+
+template<typename T>
+vector<T>::vector(const vector<T> &copy)
+{
+	size_t = copy.size_t;
+	capacity_t = copy.capacity_t;
+	pointer = new T[capacity_t];
+	for (int i = 0; i < size_t; i++)
+		pointer[i] = copy.pointer[i];
+}
+template<typename T>
+vector<T>::~vector()
+{
+	delete[]pointer;
+}
+
+template<typename T>
+T* vector<T>::begin()
+{
+	return pointer;
+}
+
+template<typename T>
+T* vector<T>::end()
+{
+	return pointer + size_t;
+}
+
+template<typename T>
+int vector<T>::size()
+{
+	return size_t;
+}
+
+template<typename T>
+int vector<T>::capacity()
+{
+	return capacity_t;
+}
+
+template<typename T>
+void vector<T>::resize(int size)
+{
+	delete[] pointer;
+	capacity_t =size_t = size;
+	pointer = new T[capacity_t];
+	for (int i = 0; i < capacity_t; i++)
+		pointer[i] = 0;
+}
+
+template<typename T>
+bool vector<T>::empty()
+{
+	if (size_t == 0)
+		return 1;
+	else
+		return 0;
+}
+
+template<typename T>
+void vector<T>::reserve(int size)
+{
+	if (size > size_t)
+	{
+		T* temp = pointer;
+		pointer = new T[size];
+		for (int i = 0; i < size_t; i++)
+			pointer[i] = temp[i];
+		for (int i = size_t; i < size; i++)
+			pointer[i] = 0;
+		capacity_t = size_t = size;
+		delete[]temp;
+	}
+}
+
+template<typename T>
+void vector<T>::shrink_to_fit()
+{
+	T *temp = pointer;
+	capacity_t = size_t;
+	pointer = new T[capacity_t];
+	for (int i = 0; i < capacity; i++)
+		pointer[i] = temp[i];
+	delete[]temp;
+}
+
+template<typename T>
+T& vector<T>::operator[](int n)
+{
+	return pointer[n];
+}
+
+template<typename T>
+void vector<T>::operator=(vector<T>x)
+{
+	delete[]pointer;
+	size_t = x.size_t;
+	capacity_t = x.capacity_t;
+	pointer = new T[capacity_t];
+	for (int i = 0; i < size_t; i++)
+		pointer[i] = x.pointer[i];
+}
+
+template<typename T>
+T& vector<T>::at(int n)
+{
+	if(n<size_t)
+		return pointer[n];
+}
+
+template<typename T>
+T& vector<T>::front()
+{
+	return pointer[0];
+}
+
+template<typename T>
+T& vector<T>::back()
+{
+	return pointer[size_t - 1];
+}
+
+template<typename T>
+T* vector<T>::data()
+{
+	return pointer;
+}
+
+template<typename T>
+void vector<T>::assign(int n, T val)
+{
+	delete[]pointer;
+	size_t = capacity_t = n;
+	pointer = new T[size_t];
+	for (int i = 0; i < size_t; i++)
+		pointer[i] = val;
+}
+
+template<typename T>
+void vector<T>::assign(T* begin, T* end)
+{
+	int n = end - begin;
+	delete[]pointer;
+	size_t = capacity_t = n;
+	pointer = new T[size_t];
+	for (int i = 0; i < size_t; i++)
+		pointer[i] = begin[i];
+
+}
+
+template<typename T>
+void vector<T>::push_back(T val)
+{
+	if (size_t == capacity_t)
+	{
+		T*temp = pointer;
+		capacity_t *= increase_factor;
+		pointer = new T[capacity_t];
+		for (int i = 0; i < size_t; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+	pointer[size_t++] = val;
+}
+
+template<typename T>
+void vector<T>::pop_back()
+{
+	size_t--;
+	if (size_t*decrease_factor < capacity_t)
+	{
+		T*temp = pointer;
+		capacity_t = size_t;
+		pointer = new T[capacity_t];
+		for (int i = 0; i < size_t; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+}
+
+template<typename T>
+void vector<T>::insert(T* position, int n, T val)
+{
+	int begin = position - pointer;
+	if (capacity_t  < size_t+ n)
+	{
+		while (capacity_t < size_t + n)
+			capacity_t <<= 1;
+		T* temp = pointer;
+		pointer = new T[capacity_t];
+		for (int i = size_t - 1; i >= begin; i--)
+			pointer[i + n] = temp[i];
+		for (int i = 0; i < begin; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+	else
+	{
+		for (int i = size_t - 1; i >= begin; i--)
+			pointer[i + n] = pointer[i];
+	}
+	for (int i = begin; i < begin + n; i++)
+		pointer[i] = val;
+	size_t += n;
+}
+
+template<typename T>
+void vector<T>::insert(T* first, T* last)
+{
+	int n = last - first; 
+	if (capacity_t < size_t + n)
+	{
+		while (capacity_t < size_t + n)
+			capacity_t <<= 1;
+		T* temp = pointer;
+		pointer = new T[capacity_t];
+		for (int i = size_t - 1; i >=0; i--)
+			pointer[i + n] = temp[i];
+		delete[]temp;
+	}
+	else
+	{
+		for (int i = size_t - 1; i >= 0; i--)
+			pointer[i + n] = pointer[i];
+	}
+	for (int i =0; i <n; i++)
+		pointer[i] =first[i];
+	size_t += n;
+}
+
+template<typename T>
+void vector<T>::insert(T* position, T* first, T* last)
+{
+	int n = last - first,begin=position-pointer;
+	if (capacity_t  < size_t + n)
+	{
+		while (capacity_t < size_t + n)
+			capacity_t <<= 1;
+		T* temp = pointer;
+		pointer = new T[capacity_t];
+		for (int i = size_t - 1; i >= begin; i--)
+			pointer[i + n] = temp[i];
+		for (int i = 0; i < begin; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+	else
+	{
+		for (int i = size_t - 1; i >=begin; i--)
+			pointer[i + n] = pointer[i];
+	}
+	for (int i = 0; i < n; i++)
+		pointer[i+begin] = first[i];
+	size_t += n;
+}
+
+template<typename T>
+void vector<T>::erase(T *position)
+{
+	int begin = position - pointer;
+	for (int i = begin + 1; i < size_t; i++)
+		pointer[i - 1] = pointer[i];
+	size_t--;
+	if (size_t*decrease_factor < capacity_t)
+	{
+		T*temp = pointer;
+		capacity_t = size_t;
+		pointer = new T[capacity_t];
+		for (int i = 0; i < size_t; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+}
+
+template<typename T>
+void vector<T>::erase(T* first, T* last)
+{
+	int n = last - first,begin=first-pointer;
+	for (int i = begin + n; i < size_t; i++)
+		pointer[i - n] = pointer[i];
+	size_t -= n;
+	if (size_t*decrease_factor < capacity_t)
+	{
+		T*temp = pointer;
+		capacity_t = size_t;
+		pointer = new T[capacity_t];
+		for (int i = 0; i < size_t; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+}
+
+template<typename T>
+void vector<T>::swap(vector<T>x)
+{
+	T*temp = pointer;
+	pointer = x.pointer;
+	x.pointer = temp;
+	int temp = size_t;
+	size_t = x.size_t;
+	x.size_t = temp;
+	temp = capacity_t;
+	capacity_t = x.capacity_t;
+	x.capacity_t = temp;
+}
+
+template<typename T>
+void vector<T>::clear()
+{
+	size_t = capacity_t = 0;
+	delete[]pointer;
+	pointer = 0;
+}
+
+template<typename T>
+T* vector<T>::emplace(T *position, T val)
+{
+	int begin = position - pointer;
+	if (size_t == capacity_t)
+	{
+		T*temp = pointer;
+		capacity_t *= increase_factor;
+		pointer = new T[capacity_t];
+		for (int i = size_t-1; i >=begin; i--)
+			pointer[i+1] = temp[i];
+		pointer[begin] = val;
+		for (int i = 0; i < begin; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+	else
+	{
+		for (int i = size_t - 1; i >= begin; i--)
+			pointer[i + 1] = pointer[i];
+		pointer[begin] = val;
+	}
+	size_t++;
+	return pointer + begin;
+}
+
+template<typename T>
+void vector<T>::emplace_back(T val)
+{
+	if (size_t == capacity_t)
+	{
+		T*temp = pointer;
+		capacity_t *= increase_factor;
+		pointer = new T[capacity_t];
+		for (int i = 0; i < size_t; i++)
+			pointer[i] = temp[i];
+		delete[]temp;
+	}
+	pointer[size_t++] = val;
+}
